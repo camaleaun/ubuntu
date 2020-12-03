@@ -1,0 +1,101 @@
+#!/bin/bash
+
+WHOAMI=$(whoami)
+
+print_status() {
+	echo
+	echo "## $1"
+	echo
+}
+
+install_php() {
+	if [[ ! $(which -a php) ]]
+	then
+		echo "Installing PHP..."
+
+		add-apt-repository -y ppa:ondrej/php > /dev/null 2>&1 && apt-get update > /dev/null 2>&1
+
+		VERSION='7.4'
+		apt install -y "php$VERSION-cli php$VERSION-curl php$VERSION-fpm php$VERSION-mysql php$VERSION-xml php$VERSION-gd php$VERSION-mbstring php$VERSION-imagick php$VERSION-ssh2" > /dev/null 2>&1
+	fi
+}
+
+install_composer() {
+	if [[ ! $(which -a composer) ]]
+	then
+		echo "Installing Composer..."
+		/usr/bin/php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+		/usr/bin/php -r "if (hash_file('sha384', 'composer-setup.php') === '756890a4488ce9024fc62c56153228907f1545c228516cbf63f885e036d37e9a59d27d63f46af1d4d07ee0f76181c7d3') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" > /dev/null 2>&1
+		/usr/bin/php composer-setup.php > /dev/null 2>&1
+		/usr/bin/php -r "unlink('composer-setup.php');"
+
+		mv composer.phar /usr/local/bin/composer
+		chmod +x /usr/local/bin/composer
+	fi
+}
+
+install_nginx() {
+	if [[ ! $(which -a nginx) ]]
+	then
+		echo "Installing Nginx..."
+
+		add-apt-repository -y ppa:nginx/stable > /dev/null 2>&1 && apt-get update > /dev/null 2>&1
+
+		apt install -y nginx > /dev/null 2>&1
+	fi
+}
+
+install_valet() {
+	if [[ ! $(which -a valet) ]]
+	then
+		echo "Installing Valet..."
+
+		composer global require cpriego/valet-linux > /dev/null 2>&1
+
+		echo "export PATH=\$PATH:$(composer config --global home)/$(composer config --global bin-dir)" >> ~/.bashrc
+		source ~/.bashrc
+
+		valet install
+
+		mkdir -p ~/.wp-cli/sites
+		cd ~/.wp-cli/sites
+		valet park > /dev/null 2>&1
+	fi
+}
+
+install_wpcli() {
+	if [[ ! $(which -a wp) ]]
+	then
+		echo "Installing WP-CLI..."
+
+		curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+
+		chmod +x wp-cli.phar
+		sudo mv wp-cli.phar /usr/local/bin/wp
+
+		curl -s https://raw.githubusercontent.com/wp-cli/wp-cli/v2.4.0/utils/wp-completion.bash -o ~/.wp-completion.bash
+
+		echo ". ~/.wp-completion.bash" >> ~/.bashrc
+		source ~/.bashrc
+	fi
+}
+
+install_mysql() {
+	if [[ ! $(which -a mysql) ]]
+	then
+		echo "Installing MySQL..."
+	fi
+}
+
+setup() {
+	print_status "Setup Development enviroment..."
+
+	install_php
+	install_composer
+	install_nginx
+	install_valet
+	install_wpcli
+	install_mysql
+}
+
+setup
