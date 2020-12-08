@@ -16,7 +16,7 @@ install_php() {
 		sudo add-apt-repository -y ppa:ondrej/php && sudo apt-get update
 
 		VERSION='7.4'
-		sudo apt install -y "php$VERSION-cli php$VERSION-curl php$VERSION-fpm php$VERSION-mysql php$VERSION-xml php$VERSION-gd php$VERSION-mbstring php$VERSION-imagick php$VERSION-ssh2"
+		sudo apt install -y php$VERSION-cli php$VERSION-curl php$VERSION-fpm php$VERSION-mysql php$VERSION-xml php$VERSION-gd php$VERSION-mbstring php$VERSION-imagick php$VERSION-ssh2
 	fi
 }
 
