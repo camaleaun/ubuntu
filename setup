@@ -29,7 +29,7 @@ install_composer() {
 		/usr/bin/php composer-setup.php
 		/usr/bin/php -r "unlink('composer-setup.php');"
 
-		chmod +x /usr/local/bin/composer
+		chmod +x composer.phar
 		sudo mv composer.phar /usr/local/bin/composer
 	fi
 }
