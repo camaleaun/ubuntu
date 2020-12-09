@@ -50,7 +50,7 @@ install_valet() {
 	then
 		echo "Installing Valet..."
 
-		composer global require cpriego/valet-linux
+		composer global require cpriego/valet-linux:v2.2.14
 
 		echo "export PATH=\$PATH:$(composer config --global home)/$(composer config --global bin-dir)" >> ~/.bashrc
 		source ~/.bashrc
@@ -119,10 +119,11 @@ install_git() {
 	echo "to set your account's default identity."
 }
 
-install_node() {
+install_nodejs() {
 	if [[ ! $(which -a node) ]]
 	then
 		curl -sL https://rpm.nodesource.com/setup_lts.x | sudo bash -
+		sudo apt install -y nodejs
 	fi
 }
 
