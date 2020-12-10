@@ -8,12 +8,21 @@ print_status() {
 	echo
 }
 
+install_curl() {
+	if [[ ! $(which -a curl) ]]
+	then
+		echo "Installing curl..."
+
+		sudo apt install -y curl
+	fi
+}
+
 install_php() {
 	if [[ ! $(which -a php) ]]
 	then
 		echo "Installing PHP..."
 
-		sudo add-apt-repository -y ppa:ondrej/php && sudo apt-get update
+		sudo add-apt-repository -y ppa:ondrej/php && sudo apt update
 
 		VERSION='7.4'
 		sudo apt install -y php$VERSION-cli php$VERSION-curl php$VERSION-fpm php$VERSION-mysql php$VERSION-xml php$VERSION-gd php$VERSION-mbstring php$VERSION-imagick php$VERSION-ssh2 php$VERSION-zip
@@ -54,6 +63,8 @@ install_valet() {
 
 		echo "export PATH=\$PATH:$(composer config --global home)/$(composer config --global bin-dir)" >> ~/.bashrc
 		source ~/.bashrc
+		
+		sudo apt install -y libnss3-tools jq xsel
 
 		valet install
 
@@ -77,6 +88,9 @@ install_wpcli() {
 
 		echo ". ~/.wp-completion.bash" >> ~/.bashrc
 		source ~/.bashrc
+		
+		wp package install camaleaun/cli-config-command
+		wp package install camaleaun/run-command
 	fi
 }
 
@@ -107,7 +121,7 @@ install_git() {
 	echo ". ~/.git-prompt.sh" >> ~/.bashrc
 
 	echo "export GIT_PS1_SHOWDIRTYSTATE=1" >> ~/.bashrc
-	echo "export PS1='\w$(__git_ps1 " (%s)")\$ '" >> ~/.bashrc
+	echo "export PS1='\w\$(__git_ps1 \" (%s)\")\\$ '" >> ~/.bashrc
 
 	source ~/.bashrc
 
@@ -129,8 +143,9 @@ install_nodejs() {
 
 setup() {
 	print_status "Setup Development enviroment..."
-
-	install_php
+	
+	install_curl
+        install_php
 	install_composer
 	install_nginx
 	install_valet
